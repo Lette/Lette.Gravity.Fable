@@ -15,15 +15,14 @@ module App =
     let moveBody (body : Domain.Body) (otherBodies : Domain.Body list) =
 
         // F = ma  =>  a = F/m,  F = Gm1m2/(r^2), a = v'(t)  =>  a = dv/dt ~~ delta-V / delta-T,
-        // assuming delta-V is 1 ==> deltaV = Gm1m2/(r^2)/m
+        // assuming delta-T is 1 (can I?) ==> deltaV = Gm1m2/(r^2)/m
 
-        let G = 80.  // TODO: This must surely be adjusted!
+        let G = 0.4  // TODO: This must surely be adjusted!
 
         let distanceSquaredTo (otherBody : Domain.Body) =
             let dx = body.Position.x - otherBody.Position.x
             let dy = body.Position.y - otherBody.Position.y
             Math.Max (dx * dx + dy * dy, 20.0)
-
 
         let forceTowards (otherBody : Domain.Body) =
             G * body.Mass * otherBody.Mass / (distanceSquaredTo otherBody)
@@ -39,12 +38,15 @@ module App =
         let (newDeltaVX, newDeltaVY) =
              otherBodies
                 |> List.map ((fun otherBody -> (forceTowards otherBody) / body.Mass, (directionTo otherBody)) >> toVector)
-                |> List.fold (fun (sumdx, sumdy) (dx, dy) -> (sumdx + dx, sumdy + dy)) (body.Velocity.dx, body.Velocity.dy)
+                |> List.fold (fun (sumdx, sumdy) (dx, dy) -> (sumdx + dx, sumdy + dy)) (0., 0.)
 
-
-        let newX = body.Position.x + newDeltaVX
-        let newY = body.Position.y + newDeltaVY
-        { body with Position = { x = adjustForBounds Domain.width newX; y = adjustForBounds Domain.height newY } }
+        let newVx = body.Velocity.dx + newDeltaVX
+        let newVy = body.Velocity.dy + newDeltaVY
+        let newX = body.Position.x + newVx
+        let newY = body.Position.y + newVy
+        { body with
+            Position = { x = adjustForBounds Domain.width newX; y = adjustForBounds Domain.height newY };
+            Velocity = { dx = newVx; dy = newVy } }
 
     let moveBodies bodies =
         bodies |> List.map (fun body -> moveBody body (List.except [body] bodies))
