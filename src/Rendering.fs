@@ -6,13 +6,14 @@ module Rendering =
     open Fable.Core
     open Fable.Core.JsInterop
     open Fable.Import
+    open System
 
     let private black : U3<string, Browser.CanvasGradient, Browser.CanvasPattern> = !^"rgb(0,0,0)"
     let private white : U3<string, Browser.CanvasGradient, Browser.CanvasPattern> = !^"rgb(255,255,255)"
 
     let private drawBody (ctx : Browser.CanvasRenderingContext2D) (body : Domain.Body) =
 
-        let radius = body.Mass * 5.
+        let radius = Math.Sqrt (body.Mass) * 5.
 
         let draw x y =
             ctx.beginPath ()
