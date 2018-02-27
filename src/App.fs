@@ -1,36 +1,38 @@
-module Lette.Gravity.Fable.App
+﻿namespace Lette.Gravity.Fable
 
-let adjustForBounds bound x =
-    if x < 0. then
-        bound - x
-    else if x > bound then
-        x - bound
-    else
-        x
+module App =
 
-let moveBody (body : Domain.Body) =
-    let newX = body.Position.x + body.Velocity.dx
-    let newY = body.Position.y + body.Velocity.dy
-    { body with Position = { x = adjustForBounds Domain.width newX; y = adjustForBounds Domain.height newY }}
+    let adjustForBounds bound x =
+        if x < 0. then
+            bound - x
+        else if x > bound then
+            x - bound
+        else
+            x
 
-let moveBodies bodies =
-    bodies |> List.map moveBody
+    let moveBody (body : Domain.Body) =
+        let newX = body.Position.x + body.Velocity.dx
+        let newY = body.Position.y + body.Velocity.dy
+        { body with Position = { x = adjustForBounds Domain.width newX; y = adjustForBounds Domain.height newY } }
 
-let rec runSimulation ctx bodies =
-    async {
-        let newBodies = moveBodies bodies
+    let moveBodies bodies =
+        bodies |> List.map moveBody
 
-        Rendering.resetCanvas ctx
-        Rendering.drawBodies ctx newBodies
+    let rec runSimulation ctx bodies =
+        async {
+            let newBodies = moveBodies bodies
 
-        do! Async.Sleep (1)
-        return! runSimulation ctx newBodies
-    }
-    
-let init () =
-    async {
-        let ctx = Rendering.init ()
-        return! runSimulation ctx Domain.bodies 
-    }
+            Rendering.resetCanvas ctx
+            Rendering.drawBodies ctx newBodies
 
-init() |> Async.StartImmediate
+            do! Async.Sleep (1)
+            return! runSimulation ctx newBodies
+        }
+
+    let init () =
+        async {
+            let ctx = Rendering.init ()
+            return! runSimulation ctx Domain.bodies
+        }
+
+    init() |> Async.StartImmediate
