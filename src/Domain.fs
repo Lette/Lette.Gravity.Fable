@@ -6,11 +6,13 @@ module Domain =
     open System
 
     type Vector = { dx : float; dy : float } with
-        static member (+) (v1, v2)  = { dx = v1.dx + v2.dx; dy = v1.dy + v2.dy }
-        static member Zero = { dx = 0.; dy = 0. }
+        static member (+) (v1, v2) = { dx = v1.dx + v2.dx; dy = v1.dy + v2.dy }
+        static member Zero         = { dx = 0.; dy = 0. }
+
     type Point = { x : float; y : float } with
         static member (+) (p, v) = { x = p.x + v.dx; y = p.y + v.dy }
-        static member (-) (p1, p2) = { dx = p1.x - p2.x; dy = p1.y - p2.y }
+
+    let vectorBetween p1 p2 = { dx = p2.x - p1.x; dy = p2.y - p1.y }
 
     type Body = {
         Position : Point;

@@ -13,7 +13,7 @@ module Physics =
     //    delta-V = a = Gm1m2 / (r^2) / m
 
     let distanceSquaredBetween position1 position2 =
-        let delta = position1 - position2
+        let delta = vectorBetween position1 position2
         Math.Max (delta.dx * delta.dx + delta.dy * delta.dy, MinimumProximitySquared)
 
     let forceBetween body1 body2 =
@@ -22,8 +22,8 @@ module Physics =
     let fieldStrength position body =
         G * body.Mass / (distanceSquaredBetween position body.Position)
 
-    let directionBetween (position1 : Point) (position2 : Point) =
-        let delta = position2 - position1
+    let directionBetween position1 position2 =
+        let delta = vectorBetween position1 position2
         Math.Atan2 (delta.dy, delta.dx)
 
     let toVector (r, theta) =
