@@ -17,3 +17,4 @@ _(not in any specific order)_
 - [ ] Split colliding objects when delta-V is sufficient (turn the larger object into a random number of smaller objects, while keeping the sum of all energies constant)
 - [ ] Extract all physics calculations to a Physics module
 - [ ] Don't divide by object's mass until *after* adding all force vectors together
+- [ ] 3D!
