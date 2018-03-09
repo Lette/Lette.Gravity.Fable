@@ -10,35 +10,36 @@ module Rendering =
 
     let private black : U3<string, Browser.CanvasGradient, Browser.CanvasPattern> = !^"rgb(0,0,0)"
     let private white : U3<string, Browser.CanvasGradient, Browser.CanvasPattern> = !^"rgb(255,255,255)"
+    let private planetColor : U3<string, Browser.CanvasGradient, Browser.CanvasPattern> = !^"rgba(255,100,100,0.4)"
 
     let private drawBody (ctx : Browser.CanvasRenderingContext2D) (body : Domain.Body) =
 
-        let radius = Math.Sqrt (body.Mass) * 5.
+        let radius = Math.Sqrt (body.Mass) * 4.
 
         let draw x y =
             ctx.beginPath ()
-            ctx.fillStyle <- white
+            ctx.fillStyle <- planetColor
             ctx.arc (x, y, radius, 0., 2. * System.Math.PI, false)
             ctx.fill ()
 
         let drawWithDeltas dx dy =
             draw (body.Position.x + dx) (body.Position.y + dy)
 
-        let isLeftOfEdge = body.Position.x - radius < 0.
-        let isRightOfEdge = body.Position.x + radius > Domain.width
-        let isAboveEdge = body.Position.y - radius < 0.
-        let isBelowEdge = body.Position.y + radius > Domain.height
+        //let isLeftOfEdge = body.Position.x - radius < 0.
+        //let isRightOfEdge = body.Position.x + radius > Domain.width
+        //let isAboveEdge = body.Position.y - radius < 0.
+        //let isBelowEdge = body.Position.y + radius > Domain.height
 
         let dxs = seq {
                 yield 0.
-                if isLeftOfEdge then yield Domain.width
-                if isRightOfEdge then yield -Domain.width
+                //if isLeftOfEdge then yield Domain.width
+                //if isRightOfEdge then yield -Domain.width
             }
 
         let dys = seq {
                 yield 0.
-                if isAboveEdge then yield Domain.height
-                if isBelowEdge then yield -Domain.height
+                //if isAboveEdge then yield Domain.height
+                //if isBelowEdge then yield -Domain.height
             }
 
         // TODO: Use this when "Seq.allPairs" are supported by fable
@@ -50,6 +51,7 @@ module Rendering =
         bodies |> List.iter (drawBody ctx)
 
     let resetCanvas (ctx : Browser.CanvasRenderingContext2D) =
+        ctx.beginPath ()
         ctx.fillStyle <- black
         ctx.clearRect (0., 0., Domain.width, Domain.height)
         ctx.strokeStyle <- white

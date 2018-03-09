@@ -12,12 +12,20 @@ module App =
         else
             x
 
+    let rec updateBody x y dx dy (body : Domain.Body) =
+        match x, y with
+        | a, _ when a < 0.            -> updateBody 0. y 0. dy body
+        | a, _ when a > Domain.width  -> updateBody Domain.width y 0. dy body
+        | _, b when b < 0.            -> updateBody x 0. dx 0. body
+        | _, b when b > Domain.height -> updateBody x Domain.height dx 0. body
+        | _                           -> { body with Position = { x = x; y = y }; Velocity = { dx = dx; dy = dy } }
+
     let moveBody (body : Domain.Body) (otherBodies : Domain.Body list) =
 
         // F = ma  =>  a = F/m,  F = Gm1m2/(r^2), a = v'(t)  =>  a = dv/dt ~~ delta-V / delta-T,
         // assuming delta-T is 1 (can I?) ==> deltaV = Gm1m2/(r^2)/m
 
-        let G = 0.4  // TODO: This must surely be adjusted!
+        let G = 0.2  // TODO: This must surely be adjusted!
 
         let distanceSquaredTo (otherBody : Domain.Body) =
             let dx = body.Position.x - otherBody.Position.x
@@ -44,9 +52,8 @@ module App =
         let newVy = body.Velocity.dy + newDeltaVY
         let newX = body.Position.x + newVx
         let newY = body.Position.y + newVy
-        { body with
-            Position = { x = adjustForBounds Domain.width newX; y = adjustForBounds Domain.height newY };
-            Velocity = { dx = newVx; dy = newVy } }
+
+        updateBody newX newY newVx newVy body
 
     let moveBodies bodies =
         bodies |> List.map (fun body -> moveBody body (List.except [body] bodies))
@@ -65,6 +72,7 @@ module App =
     let init () =
         async {
             let ctx = Rendering.init ()
+            Rendering.resetCanvas ctx
             return! runSimulation ctx Domain.bodies
         }
 
