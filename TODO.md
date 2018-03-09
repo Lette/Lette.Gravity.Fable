@@ -15,6 +15,7 @@ _(not in any specific order)_
 - [ ] Make objects bounce off each other (reflect their direction of movement with regards to the tangent of the point of collision, keeping the speed constant)
 - [ ] Merge colliding objects when delta-V is sufficient (2 objects become one, with the sum of the two original masses)
 - [ ] Split colliding objects when delta-V is sufficient (turn the larger object into a random number of smaller objects, while keeping the sum of all energies constant)
-- [ ] Extract all physics calculations to a Physics module
-- [ ] Don't divide by object's mass until *after* adding all force vectors together
+- [x] Extract all physics calculations to a Physics module
+- [x] Extract all modifiable settings to a Settings module
 - [ ] 3D!
+- [x] Remove `RequireQualifiedAccess` attribute to get type inference in method signatures working.
