@@ -2,34 +2,33 @@
 
 module App =
 
-    let rec updateBody x y dx dy (body : Domain.Body) =
+    let rec updateBody (position : Domain.Point) (velocity : Domain.Vector) (body : Domain.Body) =
         let min = body.Radius
         let maxX = Settings.Width - body.Radius
         let maxY = Settings.Heigth - body.Radius
 
-        match x, y with
-        | a, _ when a < min  -> updateBody min y 0. dy body
-        | a, _ when a > maxX -> updateBody maxX y 0. dy body
-        | _, b when b < min  -> updateBody x min dx 0. body
-        | _, b when b > maxY -> updateBody x maxY dx 0. body
-        | a, b               -> { body with Position = { x = a; y = b }; Velocity = { dx = dx; dy = dy } }
+        match (position.x, position.y) with
+        | a, _ when a < min  -> updateBody { position with x = min }  { velocity with dx = 0. } body
+        | a, _ when a > maxX -> updateBody { position with x = maxX } { velocity with dx = 0. } body
+        | _, b when b < min  -> updateBody { position with y = min }  { velocity with dy = 0. } body
+        | _, b when b > maxY -> updateBody { position with y = maxY } { velocity with dy = 0. } body
+        | _                  -> { body with Position = position; Velocity = velocity }
 
     let moveBody (body : Domain.Body) (otherBodies : Domain.Body list) =
 
         let forceTowards = Physics.forceBetween body
         let directionTo = Physics.directionBetween body.Position
 
-        let (newDeltaVX, newDeltaVY) =
-             otherBodies
-                |> List.map ((fun otherBody -> (forceTowards otherBody) / body.Mass, (directionTo otherBody.Position)) >> Physics.toVector)
-                |> List.fold (fun (sumdx, sumdy) (dx, dy) -> (sumdx + dx, sumdy + dy)) (0., 0.)
+        let createForceVector otherBody =
+            ((forceTowards otherBody) / body.Mass, (directionTo otherBody.Position)) |> Physics.toVector
 
-        let newVx = body.Velocity.dx + newDeltaVX
-        let newVy = body.Velocity.dy + newDeltaVY
-        let newX = body.Position.x + newVx
-        let newY = body.Position.y + newVy
+        let newDeltaV =
+             otherBodies |> List.sumBy createForceVector
 
-        updateBody newX newY newVx newVy body
+        let newVelocity = body.Velocity + newDeltaV
+        let newPosition = body.Position + newVelocity
+
+        updateBody newPosition newVelocity body
 
     let moveBodies bodies =
         bodies |> List.map (fun body -> moveBody body (List.except [body] bodies))
