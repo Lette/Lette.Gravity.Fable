@@ -14,12 +14,10 @@ module Rendering =
 
     let private drawBody (ctx : Browser.CanvasRenderingContext2D) (body : Domain.Body) =
 
-        let radius = Math.Sqrt (body.Mass) * 4.
-
         let draw x y =
             ctx.beginPath ()
             ctx.fillStyle <- planetColor
-            ctx.arc (x, y, radius, 0., 2. * System.Math.PI, false)
+            ctx.arc (x, y, body.Radius, 0., 2. * System.Math.PI, false)
             ctx.fill ()
 
         let drawWithDeltas dx dy =

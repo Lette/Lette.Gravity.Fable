@@ -3,13 +3,15 @@ namespace Lette.Gravity.Fable
 [<RequireQualifiedAccess>]
 module Domain =
 
+    open System
+
     type Position = { x : float; y : float }
     type Velocity = { dx : float; dy : float }
     type Body = {
         Position : Position;
         Mass : float;
-        Velocity : Velocity
-    }
+        Velocity : Velocity }
+        with member this.Radius with get() = Math.Pow (this.Mass, 1./2.) * 4.
 
     let ZeroVelocity = { dx = 0.; dy = 0. }
 

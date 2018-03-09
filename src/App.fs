@@ -13,12 +13,16 @@ module App =
             x
 
     let rec updateBody x y dx dy (body : Domain.Body) =
+        let min = body.Radius
+        let maxX = Domain.width - body.Radius
+        let maxY = Domain.height - body.Radius
+
         match x, y with
-        | a, _ when a < 0.            -> updateBody 0. y 0. dy body
-        | a, _ when a > Domain.width  -> updateBody Domain.width y 0. dy body
-        | _, b when b < 0.            -> updateBody x 0. dx 0. body
-        | _, b when b > Domain.height -> updateBody x Domain.height dx 0. body
-        | _                           -> { body with Position = { x = x; y = y }; Velocity = { dx = dx; dy = dy } }
+        | a, _ when a < min  -> updateBody min y 0. dy body
+        | a, _ when a > maxX -> updateBody maxX y 0. dy body
+        | _, b when b < min  -> updateBody x min dx 0. body
+        | _, b when b > maxY -> updateBody x maxY dx 0. body
+        | a, b               -> { body with Position = { x = a; y = b }; Velocity = { dx = dx; dy = dy } }
 
     let moveBody (body : Domain.Body) (otherBodies : Domain.Body list) =
 
