@@ -17,7 +17,7 @@ module Rendering =
         let draw x y =
             ctx.beginPath ()
             ctx.fillStyle <- planetColor
-            ctx.arc (x, y, body.Radius, 0., 2. * System.Math.PI, false)
+            ctx.arc (x, y, body.Radius, 0., 2. * Math.PI, false)
             ctx.fill ()
 
         let drawWithDeltas dx dy =
@@ -51,13 +51,13 @@ module Rendering =
     let resetCanvas (ctx : Browser.CanvasRenderingContext2D) =
         ctx.beginPath ()
         ctx.fillStyle <- black
-        ctx.clearRect (0., 0., Domain.width, Domain.height)
+        ctx.clearRect (0., 0., Settings.Width, Settings.Heigth)
         ctx.strokeStyle <- white
-        ctx.rect (0.5, 0.5, Domain.width - 1., Domain.height - 1.)
+        ctx.rect (0.5, 0.5, Settings.Width - 1., Settings.Heigth - 1.)
         ctx.stroke ()
 
     let init () =
         let canvas = Browser.document.getElementsByTagName_canvas().[0]
-        canvas.width <- Domain.width
-        canvas.height <- Domain.height
+        canvas.width <- Settings.Width
+        canvas.height <- Settings.Heigth
         canvas.getContext_2d()
