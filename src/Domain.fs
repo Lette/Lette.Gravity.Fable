@@ -1,6 +1,6 @@
 namespace Lette.Gravity.Fable
 
-[<RequireQualifiedAccess>]
+[<AutoOpen>]
 module Domain =
 
     open System
@@ -18,7 +18,7 @@ module Domain =
         Velocity : Vector }
         with member this.Radius with get() = Math.Pow (this.Mass, 1./2.) * 4.
 
-    let bodies = [ 
+    let initialBodies = [
         { Position = { x = 400.; y = 225. }; Mass = 50.0; Velocity = { dx = -0.2; dy = 0.1 } }
         { Position = { x = 380.; y = 225. }; Mass = 10.0; Velocity = { dx = 0.4; dy = 0.1 } }
         { Position = { x = 360.; y = 225. }; Mass = 8.0; Velocity = { dx = 0.2; dy = -0.5 } }

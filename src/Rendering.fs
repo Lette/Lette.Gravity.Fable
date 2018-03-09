@@ -1,6 +1,6 @@
 namespace Lette.Gravity.Fable
 
-[<RequireQualifiedAccess>]
+[<AutoOpen>]
 module Rendering =
 
     open Fable.Core
@@ -12,7 +12,7 @@ module Rendering =
     let private white : U3<string, Browser.CanvasGradient, Browser.CanvasPattern> = !^"rgb(255,255,255)"
     let private planetColor : U3<string, Browser.CanvasGradient, Browser.CanvasPattern> = !^"rgba(255,100,100,0.4)"
 
-    let private drawBody (ctx : Browser.CanvasRenderingContext2D) (body : Domain.Body) =
+    let private drawBody (ctx : Browser.CanvasRenderingContext2D) (body : Body) =
 
         let draw x y =
             ctx.beginPath ()
@@ -24,20 +24,20 @@ module Rendering =
             draw (body.Position.x + dx) (body.Position.y + dy)
 
         //let isLeftOfEdge = body.Position.x - radius < 0.
-        //let isRightOfEdge = body.Position.x + radius > Domain.width
+        //let isRightOfEdge = body.Position.x + radius > Width
         //let isAboveEdge = body.Position.y - radius < 0.
-        //let isBelowEdge = body.Position.y + radius > Domain.height
+        //let isBelowEdge = body.Position.y + radius > Height
 
         let dxs = seq {
                 yield 0.
-                //if isLeftOfEdge then yield Domain.width
-                //if isRightOfEdge then yield -Domain.width
+                //if isLeftOfEdge then yield Width
+                //if isRightOfEdge then yield -Width
             }
 
         let dys = seq {
                 yield 0.
-                //if isAboveEdge then yield Domain.height
-                //if isBelowEdge then yield -Domain.height
+                //if isAboveEdge then yield Height
+                //if isBelowEdge then yield -Height
             }
 
         // TODO: Use this when "Seq.allPairs" are supported by fable
@@ -51,13 +51,16 @@ module Rendering =
     let resetCanvas (ctx : Browser.CanvasRenderingContext2D) =
         ctx.beginPath ()
         ctx.fillStyle <- black
-        ctx.clearRect (0., 0., Settings.Width, Settings.Heigth)
+        ctx.clearRect (0., 0., Width, Heigth)
         ctx.strokeStyle <- white
-        ctx.rect (0.5, 0.5, Settings.Width - 1., Settings.Heigth - 1.)
+        ctx.rect (0.5, 0.5, Width - 1., Heigth - 1.)
         ctx.stroke ()
 
-    let init () =
+    let initializeCanvas () =
         let canvas = Browser.document.getElementsByTagName_canvas().[0]
-        canvas.width <- Settings.Width
-        canvas.height <- Settings.Heigth
+        canvas.width <- Width
+        canvas.height <- Heigth
+        canvas
+
+    let getDrawingContext (canvas : Browser.HTMLCanvasElement) =
         canvas.getContext_2d()

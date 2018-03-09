@@ -1,6 +1,6 @@
 namespace Lette.Gravity.Fable
 
-[<RequireQualifiedAccess>]
+[<AutoOpen>]
 module Settings =
 
     // Gravitational constant

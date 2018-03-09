@@ -2,10 +2,10 @@
 
 module App =
 
-    let rec updateBody (position : Domain.Point) (velocity : Domain.Vector) (body : Domain.Body) =
+    let rec updateBody position velocity (body : Body) =
         let min = body.Radius
-        let maxX = Settings.Width - body.Radius
-        let maxY = Settings.Heigth - body.Radius
+        let maxX = Width - body.Radius
+        let maxY = Heigth - body.Radius
 
         match (position.x, position.y) with
         | a, _ when a < min  -> updateBody { position with x = min }  { velocity with dx = 0. } body
@@ -14,13 +14,13 @@ module App =
         | _, b when b > maxY -> updateBody { position with y = maxY } { velocity with dy = 0. } body
         | _                  -> { body with Position = position; Velocity = velocity }
 
-    let moveBody (body : Domain.Body) (otherBodies : Domain.Body list) =
+    let moveBody body otherBodies =
 
-        let forceTowards = Physics.forceBetween body
-        let directionTo = Physics.directionBetween body.Position
+        let forceTowards = forceBetween body
+        let directionTo = directionBetween body.Position
 
         let createForceVector otherBody =
-            ((forceTowards otherBody) / body.Mass, (directionTo otherBody.Position)) |> Physics.toVector
+            ((forceTowards otherBody) / body.Mass, (directionTo otherBody.Position)) |> toVector
 
         let newDeltaV =
              otherBodies |> List.sumBy createForceVector
@@ -37,8 +37,8 @@ module App =
         async {
             let newBodies = moveBodies bodies
 
-            Rendering.resetCanvas ctx
-            Rendering.drawBodies ctx newBodies
+            resetCanvas ctx
+            drawBodies ctx newBodies
 
             do! Async.Sleep (1)
             return! runSimulation ctx newBodies
@@ -46,9 +46,10 @@ module App =
 
     let init () =
         async {
-            let ctx = Rendering.init ()
-            Rendering.resetCanvas ctx
-            return! runSimulation ctx Domain.bodies
+            let canvas = initializeCanvas ()
+            let ctx = getDrawingContext canvas
+            resetCanvas ctx
+            return! runSimulation ctx initialBodies
         }
 
     init () |> Async.StartImmediate
