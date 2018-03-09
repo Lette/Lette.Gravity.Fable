@@ -12,12 +12,12 @@ module Rendering =
     let private white : U3<string, Browser.CanvasGradient, Browser.CanvasPattern> = !^"rgb(255,255,255)"
     let private planetColor : U3<string, Browser.CanvasGradient, Browser.CanvasPattern> = !^"rgba(255,100,100,0.4)"
 
-    let private drawBody (ctx : Browser.CanvasRenderingContext2D) (body : Body) =
+    let private drawBody (ctx : Browser.CanvasRenderingContext2D) body =
 
         let draw x y =
             ctx.beginPath ()
             ctx.fillStyle <- planetColor
-            ctx.arc (x, y, body.Radius, 0., 2. * Math.PI, false)
+            ctx.arc (x, y, (radius body), 0., 2. * Math.PI, false)
             ctx.fill ()
 
         let drawWithDeltas dx dy =

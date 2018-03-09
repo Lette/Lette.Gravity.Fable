@@ -14,11 +14,10 @@ module Domain =
 
     let vectorBetween p1 p2 = { dx = p2.x - p1.x; dy = p2.y - p1.y }
 
-    type Body = {
-        Position : Point;
-        Mass : float;
-        Velocity : Vector }
-        with member this.Radius with get() = Math.Pow (this.Mass, 1./2.) * 4.
+    type Body = { Position : Point; Mass : float; Velocity : Vector }
+
+    let radius { Mass = mass } =
+        Math.Pow (mass, 1./2.) * 4.
 
     let initialBodies = [
         { Position = { x = 400.; y = 225. }; Mass = 50.0; Velocity = { dx = -0.2; dy = 0.1 } }
