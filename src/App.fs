@@ -5,7 +5,7 @@ module App =
     let rec updateBody position velocity body =
         let min = radius body
         let maxX = Width - min
-        let maxY = Heigth - min
+        let maxY = Height - min
 
         match (position.x, position.y) with
         | a, _ when a < min  -> updateBody { position with x = min }  { velocity with dx = 0. } body
