@@ -17,15 +17,13 @@ module App =
     let moveBody body otherBodies =
 
         let forceTowards = forceBetween body
-        let directionTo = directionBetween body.Position
 
-        let createForceVector otherBody =
-            ((forceTowards otherBody) / body.Mass, (directionTo otherBody.Position)) |> toVector
+        let totalForce = otherBodies |> List.sumBy forceTowards
+        
+        // F = ma <=> a = F/m or a = (1/m) * F. F is a vector and .* is the scalar multiplication operator.
+        let acceleration = (1. / body.Mass) .* totalForce
 
-        let newDeltaV =
-             otherBodies |> List.sumBy createForceVector
-
-        let newVelocity = body.Velocity + newDeltaV
+        let newVelocity = body.Velocity + acceleration
         let newPosition = body.Position + newVelocity
 
         updateBody newPosition newVelocity body

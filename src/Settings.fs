@@ -12,4 +12,4 @@ module Settings =
 
     // Reduces slingshot effect when objects are really close, and avoids
     // division by zero in force calculations.
-    let mutable MinimumProximitySquared = 20.
+    let mutable MinimumProximity = 4.
