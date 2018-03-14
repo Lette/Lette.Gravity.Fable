@@ -3,15 +3,11 @@ namespace Lette.Gravity.Fable
 [<AutoOpen>]
 module Domain =
 
-    open System
-
     type Vector = { dx : float; dy : float } with
         static member (+) (v1, v2) = { dx = v1.dx + v2.dx; dy = v1.dy + v2.dy }
         static member Zero         = { dx = 0.;            dy = 0. }
         static member (.*) (k, v)  = { dx = k * v.dx;      dy = k * v.dy }
-        member this.Length         = sqrt (this.dx * this.dx + this.dy * this.dy)
-
-    let vectorLength v = sqrt (v.dx * v.dx + v.dy * v.dy)
+        member this.Length         = sqrt (this.dx ** 2. + this.dy ** 2.)
 
     type Point = { x : float; y : float } with
         static member (+) (p, v) = { x = p.x + v.dx; y = p.y + v.dy }
@@ -21,7 +17,7 @@ module Domain =
     type Body = { Position : Point; Mass : float; Velocity : Vector }
 
     let radius { Mass = mass } =
-        Math.Pow (mass, 1./2.) * 4.
+        sqrt mass * 4.
 
     let initialBodies = [
         { Position = { x = 400.; y = 225. }; Mass = 50.0; Velocity = { dx = -0.2; dy = 0.1 } }
