@@ -4,16 +4,16 @@ namespace Lette.Gravity.Fable
 module Settings =
 
     // Gravitational constant
-    let mutable G = 2.
+    let mutable G = 15.
 
     // Dimensions of the simulation universe
-    let mutable Width = 500.
+    let mutable Width = 1000.
     let mutable Height = 500.
     let mutable Depth = 500.
 
     // Reduces slingshot effect when objects are really close, and avoids
     // division by zero in force calculations.
-    let mutable MinimumProximity = 4.
+    let mutable MinimumProximity = 20.
 
     // Viewing distance, used for 3D projection
     let mutable ViewingDistance = 1500.
