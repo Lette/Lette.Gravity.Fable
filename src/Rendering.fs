@@ -28,6 +28,18 @@ module Rendering =
     let private ctx = canvas.getContext_2d ()
     ctx.translate (hw, hh)
 
+    let transformFactor depth =
+        ViewingDistance / (ViewingDistance + depth)
+
+    let transformToScreen point =
+        let t = transformFactor point.z
+        { x = point.x * t; y = point.y * t; z = 0. }
+
+    let p1 = { x = -hw + 0.5; y = -hh + 0.5; z = 0. }
+    let p1' = transformToScreen { p1 with z = Depth }
+    let p2 = { x = hw - 0.5; y = hh - 0.5; z = 0. }
+    let p2' = transformToScreen { p2 with z = Depth }
+
     let private ellipse x y rx ry startAngle endAngle =
         ctx.save ()
         ctx.beginPath ()
@@ -99,7 +111,18 @@ module Rendering =
     let drawBoundingBox () =
         ctx.save ()
         ctx.strokeStyle <- white
-        ctx.rect (-hw + 0.5, -hh + 0.5, Width - 1., Height - 1.)
+
+        ctx.rect (p1.x, p1.y, p2.x - p1.x, p2.y - p1.y)
+        ctx.rect (p1'.x, p1'.y, p2'.x - p1'.x, p2'.y - p1'.y)
+        ctx.moveTo (p1.x, p1.y)
+        ctx.lineTo (p1'.x, p1'.y)
+        ctx.moveTo (p1.x, p2.y)
+        ctx.lineTo (p1'.x, p2'.y)
+        ctx.moveTo (p2.x, p1.y)
+        ctx.lineTo (p2'.x, p1'.y)
+        ctx.moveTo (p2.x, p2.y)
+        ctx.lineTo (p2'.x, p2'.y)
+
         ctx.stroke ()
         ctx.restore ()
 

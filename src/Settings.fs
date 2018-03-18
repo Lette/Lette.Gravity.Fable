@@ -14,3 +14,6 @@ module Settings =
     // Reduces slingshot effect when objects are really close, and avoids
     // division by zero in force calculations.
     let mutable MinimumProximity = 4.
+
+    // Viewing distance, used for 3D projection
+    let mutable ViewingDistance = 1500.
