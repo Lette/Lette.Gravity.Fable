@@ -18,7 +18,7 @@ module Domain =
     type Body = { Position : Point; Mass : float; Velocity : Vector }
 
     let radius { Mass = mass } =
-        sqrt mass * 4.
+        mass ** (1. / 3.) * 5.
 
     let initialBodies = [
         { Position = { x = 400.; y = 225.; z = 100. }; Mass = 50.0; Velocity = { dx = -0.2; dy = 0.1; dz = 0. } }
