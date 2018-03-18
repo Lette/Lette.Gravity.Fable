@@ -4,7 +4,7 @@ namespace Lette.Gravity.Fable
 module Settings =
 
     // Gravitational constant
-    let mutable G = 0.2
+    let mutable G = 2.
 
     // Dimensions of the simulation universe
     let mutable Width = 500.

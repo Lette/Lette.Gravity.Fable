@@ -2,6 +2,8 @@
 
 module App =
 
+    open Fable.Import.Browser
+
     let rec updateBody position velocity body =
         let min = radius body
         let maxX = Width - min
@@ -31,14 +33,12 @@ module App =
     let moveBodies bodies =
         bodies |> List.map (fun body -> moveBody body (List.except [body] bodies))
 
-    let rec runSimulation bodies =
-        async {
-            let newBodies = moveBodies bodies
+    let rec runSimulation bodies _ =
+        let newBodies = moveBodies bodies
+        render newBodies
 
-            render newBodies
+        FrameRequestCallback (runSimulation newBodies)
+            |> window.requestAnimationFrame
+            |> ignore
 
-            do! Async.Sleep (1)
-            return! runSimulation newBodies
-        }
-
-    runSimulation initialBodies |> Async.StartImmediate
+    runSimulation initialBodies 0.
