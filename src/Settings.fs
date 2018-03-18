@@ -17,3 +17,7 @@ module Settings =
 
     // Viewing distance, used for 3D projection
     let mutable ViewingDistance = 1500.
+
+    // Show helper lines between projections and objects
+    let mutable ShowVerticalHelperLines = true
+    let mutable ShowHorizontalHelperLines = false

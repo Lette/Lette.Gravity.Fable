@@ -92,19 +92,36 @@ module Rendering =
             let rx = r * sin (viewingAngle x z)
             drawMeridian x y rx r
 
-        let drawProjections p r =
+        let drawProjections qx qy r =
+            ctx.beginPath ()
+
             // bottom projection
-            let qy = transformToScreen { p with y = hh }
             let qyr = r * sin (viewingAngle qy.y qy.z)
             ctx.fillStyle <- transparent
             ctx.strokeStyle <- !^ "rgba(255,255,255,0.4)"
             ellipse qy.x qy.y r qyr
 
             // left projection
-            let qx = transformToScreen { p with x = -hw }
             let qxr = r * sin (viewingAngle qx.x qx.z)
             ellipse qx.x qx.y qxr r
             ctx.stroke ()
+
+        let drawHelperLines c qx qy r =
+            if (ShowVerticalHelperLines || ShowHorizontalHelperLines) then
+                ctx.setLineDash (dashStyle)
+                ctx.strokeStyle <- !^ "rgba(255,255,255,0.4)"
+                ctx.beginPath ()
+
+                if ShowHorizontalHelperLines && (c.x - (r + 5.) > qx.x) then
+                    ctx.moveTo (qx.x, qx.y)
+                    ctx.lineTo (c.x - (r + 5.), c.y)
+
+                if ShowVerticalHelperLines && (c.y + (r + 5.) < qy.y) then
+                    ctx.moveTo (qy.x, qy.y)
+                    ctx.lineTo (c.x, c.y + (r + 5.))
+
+                ctx.stroke ()
+                ctx.setLineDash (noDash)
 
         let p = { body.Position with x = body.Position.x - hw; y = body.Position.y - hh }
         let c = transformToScreen p
@@ -116,7 +133,11 @@ module Rendering =
 
         drawFace c.x c.y body.Position.z transformedRadius
         drawGreatCircles c.x c.y body.Position.z (transformedRadius - 1.)
-        drawProjections p (transformedRadius - 1.)
+
+        let qx = transformToScreen { p with x = -hw }
+        let qy = transformToScreen { p with y = hh }
+        drawProjections qx qy (transformedRadius - 1.)
+        drawHelperLines c qx qy transformedRadius
 
     let private drawBodies bodies =
         bodies |> List.iter drawBody
