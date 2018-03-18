@@ -3,7 +3,7 @@
 _(not in any specific order)_
 
 - [ ] Make canvas stretch to window size
-- [ ] Get rid of scroll bars
+- [x] Get rid of scroll bars
 - [x] Use alpha channel to make objects blend nicer (and use a more interesting/nice color)
 - [ ] Give objects individual colors
 - [ ] Visualize field strength
