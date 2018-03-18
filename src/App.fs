@@ -11,12 +11,12 @@ module App =
         let maxZ = Depth - r
 
         match position.x, position.y, position.z with
-        | a, _, _ when a < r    -> updateBody { position with x = r    } { velocity with dx = 0. } body
-        | a, _, _ when a > maxX -> updateBody { position with x = maxX } { velocity with dx = 0. } body
-        | _, b, _ when b < r    -> updateBody { position with y = r    } { velocity with dy = 0. } body
-        | _, b, _ when b > maxY -> updateBody { position with y = maxY } { velocity with dy = 0. } body
-        | _, _, c when c < r    -> updateBody { position with z = r    } { velocity with dz = 0. } body
-        | _, _, c when c > maxZ -> updateBody { position with z = maxZ } { velocity with dz = 0. } body
+        | a, _, _ when a < r    -> updateBody { position with x = r    } { velocity with dx = -velocity.dx * Bounciness } body
+        | a, _, _ when a > maxX -> updateBody { position with x = maxX } { velocity with dx = -velocity.dx * Bounciness } body
+        | _, b, _ when b < r    -> updateBody { position with y = r    } { velocity with dy = -velocity.dy * Bounciness } body
+        | _, b, _ when b > maxY -> updateBody { position with y = maxY } { velocity with dy = -velocity.dy * Bounciness } body
+        | _, _, c when c < r    -> updateBody { position with z = r    } { velocity with dz = -velocity.dz * Bounciness } body
+        | _, _, c when c > maxZ -> updateBody { position with z = maxZ } { velocity with dz = -velocity.dz * Bounciness } body
         | _                     -> { body with Position = position; Velocity = velocity }
 
     let moveBody body otherBodies =

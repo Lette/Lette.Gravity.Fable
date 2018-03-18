@@ -21,3 +21,8 @@ module Settings =
     // Show helper lines between projections and objects
     let mutable ShowVerticalHelperLines = true
     let mutable ShowHorizontalHelperLines = false
+
+    // Bounciness (energy/velocity preservation when body hits a wall)
+    //    1.0 = full bounce, no energy/velocity loss in the direction of the bounce
+    //    0.0 = no bounce, the velocity component of the direction of the wall is set to zero
+    let mutable Bounciness = 0.8
