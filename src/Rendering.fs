@@ -8,12 +8,13 @@ module Rendering =
     open Fable.Import
     open System
 
-    let private black : U3<string, Browser.CanvasGradient, Browser.CanvasPattern> = !^"rgb(0,0,0)"
-    let private white : U3<string, Browser.CanvasGradient, Browser.CanvasPattern> = !^"rgb(255,255,255)"
-    let private planetColor : U3<string, Browser.CanvasGradient, Browser.CanvasPattern> = !^"rgba(255,100,0,0.4)"
-    let private markerColorF : U3<string, Browser.CanvasGradient, Browser.CanvasPattern> = !^"rgba(255,100,0,1.0)"
-    let private markerColorB : U3<string, Browser.CanvasGradient, Browser.CanvasPattern> = !^"rgba(0,0,255,0.55)"
-    let private transparent : U3<string, Browser.CanvasGradient, Browser.CanvasPattern> = !^"transparent"
+    let private black : U3<string, Browser.CanvasGradient, Browser.CanvasPattern> = !^ "rgb(0,0,0)"
+    let private white : U3<string, Browser.CanvasGradient, Browser.CanvasPattern> = !^ "rgb(255,255,255)"
+    let private markerColorF : U3<string, Browser.CanvasGradient, Browser.CanvasPattern> = !^ "rgba(255,100,0,1.0)"
+    let private markerColorB : U3<string, Browser.CanvasGradient, Browser.CanvasPattern> = !^ "rgba(0,0,255,0.55)"
+    let private transparent : U3<string, Browser.CanvasGradient, Browser.CanvasPattern> = !^ "transparent"
+    let private createPlanetColor z : U3<string, Browser.CanvasGradient, Browser.CanvasPattern> =
+        !^ (sprintf "rgba(255,100,0,%f" (0.1 + 0.3 * (Depth - z) / Depth))
 
     let private dashStyle = ResizeArray<_> [|2.; 3.|]
     let private noDash = ResizeArray<float> [||]
@@ -40,7 +41,7 @@ module Rendering =
     let private p2 = { x = hw - 0.5; y = hh - 0.5; z = 0. }
     let private p2' = transformToScreen { p2 with z = Depth }
 
-    let private ellipse x y rx ry startAngle endAngle =
+    let private arc x y rx ry startAngle endAngle =
         ctx.save ()
         ctx.beginPath ()
         ctx.translate (x - rx, y - ry)
@@ -49,6 +50,9 @@ module Rendering =
         ctx.restore ()
         ctx.stroke ()
 
+    let private ellipse x y rx ry =
+        arc x y rx ry 0. (2. * Math.PI)
+
     let private drawGreatCircle x y rx ry startAngle middleAngle endAngle =
         ctx.save ()
 
@@ -56,11 +60,11 @@ module Rendering =
 
         ctx.strokeStyle <- markerColorB
         ctx.setLineDash (dashStyle)
-        ellipse x y rx ry middleAngle endAngle
+        arc x y rx ry middleAngle endAngle
 
         ctx.strokeStyle <- markerColorF
         ctx.setLineDash (noDash)
-        ellipse x y rx ry startAngle middleAngle
+        arc x y rx ry startAngle middleAngle
 
         ctx.restore ()
 
@@ -72,9 +76,6 @@ module Rendering =
         let drawMeridian x y rx ry =
             drawGreatCircle x y rx ry (-Math.PI / 2.) (Math.PI / 2.) (3. * Math.PI / 2.)
 
-        let createPlanetColor z : U3<string, Browser.CanvasGradient, Browser.CanvasPattern> =
-            !^ (sprintf "rgba(255,100,0,%f" (0.1 + 0.3 * (Depth - z) / Depth))
-
         let drawFace x y z r =
             ctx.beginPath ()
             ctx.fillStyle <- (createPlanetColor z)
@@ -84,12 +85,26 @@ module Rendering =
         let viewingAngle offset depth =
             offset / (ViewingDistance + depth) |> atan
 
-        let drawLines x y z r =
+        let drawGreatCircles x y z r =
             let ry = r * sin (viewingAngle y z)
             drawEquator x y r ry
 
             let rx = r * sin (viewingAngle x z)
             drawMeridian x y rx r
+
+        let drawProjections p r =
+            // bottom projection
+            let qy = transformToScreen { p with y = hh }
+            let qyr = r * sin (viewingAngle qy.y qy.z)
+            ctx.fillStyle <- transparent
+            ctx.strokeStyle <- !^ "rgba(255,255,255,0.4)"
+            ellipse qy.x qy.y r qyr
+
+            // left projection
+            let qx = transformToScreen { p with x = -hw }
+            let qxr = r * sin (viewingAngle qx.x qx.z)
+            ellipse qx.x qx.y qxr r
+            ctx.stroke ()
 
         let p = { body.Position with x = body.Position.x - hw; y = body.Position.y - hh }
         let c = transformToScreen p
@@ -100,7 +115,8 @@ module Rendering =
         let transformedRadius = pr2.x - pr1.x
 
         drawFace c.x c.y body.Position.z transformedRadius
-        drawLines c.x c.y body.Position.z (transformedRadius - 1.)
+        drawGreatCircles c.x c.y body.Position.z (transformedRadius - 1.)
+        drawProjections p (transformedRadius - 1.)
 
     let private drawBodies bodies =
         bodies |> List.iter drawBody
@@ -113,6 +129,7 @@ module Rendering =
         ctx.restore ()
 
     let private drawBoundingBox () =
+        ctx.beginPath ()
         ctx.save ()
         ctx.strokeStyle <- white
 
