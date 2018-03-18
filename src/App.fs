@@ -31,23 +31,15 @@ module App =
     let moveBodies bodies =
         bodies |> List.map (fun body -> moveBody body (List.except [body] bodies))
 
-    let rec runSimulation ctx bodies =
+    let rec runSimulation bodies =
         async {
             let newBodies = moveBodies bodies
 
-            resetCanvas ctx
-            drawBodies ctx newBodies
+            resetCanvas ()
+            drawBodies newBodies
 
             do! Async.Sleep (1)
-            return! runSimulation ctx newBodies
+            return! runSimulation newBodies
         }
 
-    let init () =
-        async {
-            let canvas = initializeCanvas ()
-            let ctx = getDrawingContext canvas
-            resetCanvas ctx
-            return! runSimulation ctx initialBodies
-        }
-
-    init () |> Async.StartImmediate
+    runSimulation initialBodies |> Async.StartImmediate

@@ -18,7 +18,12 @@ module Rendering =
     let private dashStyle = ResizeArray<_> [|2.; 3.|]
     let private noDash = ResizeArray<float> [||]
 
-    let ellipse (ctx : Browser.CanvasRenderingContext2D) x y rx ry startAngle endAngle =
+    let private canvas = Browser.document.getElementsByTagName_canvas().[0]
+    canvas.width <- Width
+    canvas.height <- Height
+    let private ctx = canvas.getContext_2d ()
+
+    let private ellipse x y rx ry startAngle endAngle =
         ctx.save ()
         ctx.beginPath ()
         ctx.translate (x - rx, y - ry)
@@ -27,7 +32,7 @@ module Rendering =
         ctx.restore ()
         ctx.stroke ()
 
-    let private drawBody (ctx : Browser.CanvasRenderingContext2D) body =
+    let private drawBody body =
 
         let drawGreatCircle x y rx ry startAngle middleAngle endAngle =
             ctx.save ()
@@ -36,11 +41,11 @@ module Rendering =
 
             ctx.strokeStyle <- markerColorB
             ctx.setLineDash (dashStyle)
-            ellipse ctx x y rx ry middleAngle endAngle
+            ellipse x y rx ry middleAngle endAngle
 
             ctx.strokeStyle <- markerColorF
             ctx.setLineDash (noDash)
-            ellipse ctx x y rx ry startAngle middleAngle
+            ellipse x y rx ry startAngle middleAngle
 
             ctx.restore ()
 
@@ -98,22 +103,13 @@ module Rendering =
 
         dxs |> Seq.iter (fun dx -> dys |> Seq.iter (fun dy -> drawWithDeltas dx dy))
 
-    let drawBodies ctx bodies =
-        bodies |> List.iter (drawBody ctx)
+    let drawBodies bodies =
+        bodies |> List.iter drawBody
 
-    let resetCanvas (ctx : Browser.CanvasRenderingContext2D) =
+    let resetCanvas () =
         ctx.beginPath ()
         ctx.fillStyle <- black
         ctx.clearRect (0., 0., Width, Height)
         ctx.strokeStyle <- white
         ctx.rect (0.5, 0.5, Width - 1., Height - 1.)
         ctx.stroke ()
-
-    let initializeCanvas () =
-        let canvas = Browser.document.getElementsByTagName_canvas().[0]
-        canvas.width <- Width
-        canvas.height <- Height
-        canvas
-
-    let getDrawingContext (canvas : Browser.HTMLCanvasElement) =
-        canvas.getContext_2d()
