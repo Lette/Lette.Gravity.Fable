@@ -21,7 +21,12 @@ module Rendering =
     let private canvas = Browser.document.getElementsByTagName_canvas().[0]
     canvas.width <- Width
     canvas.height <- Height
+
+    let private hw = Width / 2.
+    let private hh = Height / 2.
+
     let private ctx = canvas.getContext_2d ()
+    ctx.translate (hw, hh)
 
     let private ellipse x y rx ry startAngle endAngle =
         ctx.save ()
@@ -78,43 +83,27 @@ module Rendering =
             drawBody x y r
             drawLines x y (r - 1.)
 
-        let drawWithDeltas dx dy =
-            draw (body.Position.x + dx) (body.Position.y + dy)
-
-        //let isLeftOfEdge = body.Position.x - radius < 0.
-        //let isRightOfEdge = body.Position.x + radius > Width
-        //let isAboveEdge = body.Position.y - radius < 0.
-        //let isBelowEdge = body.Position.y + radius > Height
-
-        let dxs = seq {
-                yield 0.
-                //if isLeftOfEdge then yield Width
-                //if isRightOfEdge then yield -Width
-            }
-
-        let dys = seq {
-                yield 0.
-                //if isAboveEdge then yield Height
-                //if isBelowEdge then yield -Height
-            }
-
-        // TODO: Use this when "Seq.allPairs" are supported by fable
-        // Seq.allPairs dxs dys |> Seq.iter (fun p -> p ||> drawWithDeltas)
-
-        dxs |> Seq.iter (fun dx -> dys |> Seq.iter (fun dy -> drawWithDeltas dx dy))
+        let p = { body.Position with x = body.Position.x - hw; y = body.Position.y - hh }
+        draw p.x p.y
 
     let private drawBodies bodies =
         bodies |> List.iter drawBody
 
-    let private resetCanvas () =
-        ctx.beginPath ()
+    let clearCanvas () =
+        ctx.save ()
+        ctx.setTransform (1., 0., 0., 1., 0., 0.)
         ctx.fillStyle <- black
-        ctx.clearRect (0., 0., Width, Height)
+        ctx.fillRect (0., 0., canvas.width, canvas.height)
+        ctx.restore ()
+
+    let drawBoundingBox () =
+        ctx.save ()
         ctx.strokeStyle <- white
-        ctx.rect (0.5, 0.5, Width - 1., Height - 1.)
+        ctx.rect (-hw + 0.5, -hh + 0.5, Width - 1., Height - 1.)
         ctx.stroke ()
+        ctx.restore ()
 
     let render bodies =
-        resetCanvas ()
+        clearCanvas ()
+        drawBoundingBox ()
         drawBodies bodies
-
