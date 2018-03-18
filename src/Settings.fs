@@ -26,3 +26,8 @@ module Settings =
     //    1.0 = full bounce, no energy/velocity loss in the direction of the bounce
     //    0.0 = no bounce, the velocity component of the direction of the wall is set to zero
     let mutable Bounciness = 0.8
+
+    // Preservation of velocity (ie. friction effect)
+    //    1.0  = full preservation, no slowdown/speedup
+    //    0.99 = loses 1 % of velocity every frame
+    let mutable VelocityFactor = 1.0

@@ -28,7 +28,7 @@ module App =
         // F = ma <=> a = F/m or a = (1/m) * F. F is a vector and .* is the scalar multiplication operator.
         let acceleration = (1. / body.Mass) |> scaleVector totalForce
 
-        let newVelocity = body.Velocity + acceleration
+        let newVelocity = scaleVector body.Velocity VelocityFactor + acceleration
         let newPosition = body.Position + newVelocity
 
         updateBody newPosition newVelocity body
