@@ -103,13 +103,18 @@ module Rendering =
 
         dxs |> Seq.iter (fun dx -> dys |> Seq.iter (fun dy -> drawWithDeltas dx dy))
 
-    let drawBodies bodies =
+    let private drawBodies bodies =
         bodies |> List.iter drawBody
 
-    let resetCanvas () =
+    let private resetCanvas () =
         ctx.beginPath ()
         ctx.fillStyle <- black
         ctx.clearRect (0., 0., Width, Height)
         ctx.strokeStyle <- white
         ctx.rect (0.5, 0.5, Width - 1., Height - 1.)
         ctx.stroke ()
+
+    let render bodies =
+        resetCanvas ()
+        drawBodies bodies
+

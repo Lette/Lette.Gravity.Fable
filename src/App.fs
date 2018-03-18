@@ -35,8 +35,7 @@ module App =
         async {
             let newBodies = moveBodies bodies
 
-            resetCanvas ()
-            drawBodies newBodies
+            render newBodies
 
             do! Async.Sleep (1)
             return! runSimulation newBodies
