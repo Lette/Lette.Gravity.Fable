@@ -6,8 +6,9 @@ module Domain =
     type Vector = { dx : float; dy : float; dz : float } with
         static member (+) (v1, v2) = { dx = v1.dx + v2.dx; dy = v1.dy + v2.dy; dz = v1.dz + v2.dz }
         static member Zero         = { dx = 0.;            dy = 0.;            dz = 0. }
-        static member (.*) (k, v)  = { dx = k * v.dx;      dy = k * v.dy;      dz = k * v.dz }
         member this.Length         = sqrt (this.dx ** 2. + this.dy ** 2. + this.dz ** 2.)
+
+    let scaleVector v k = { dx = k * v.dx; dy = k * v.dy; dz = k * v.dz }
 
     type Point = { x : float; y : float; z : float } with
         static member (+) (p, v) = { x = p.x + v.dx; y = p.y + v.dy; z = p.z + v.dz }

@@ -20,4 +20,4 @@ module Physics =
         //     d = |v| is the distance between the objects,
         //     so effectively the magnitude of the force multiplied by a unit vector pointing towards the other object
 
-        G * body1.Mass * body2.Mass / (d ** 3.) .* v
+        G * body1.Mass * body2.Mass / (d ** 3.) |> scaleVector v
