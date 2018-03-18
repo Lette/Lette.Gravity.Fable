@@ -5,16 +5,19 @@ module App =
     open Fable.Import.Browser
 
     let rec updateBody position velocity body =
-        let min = radius body
-        let maxX = Width - min
-        let maxY = Height - min
+        let r = radius body
+        let maxX = Width - r
+        let maxY = Height - r
+        let maxZ = Depth - r
 
-        match (position.x, position.y) with
-        | a, _ when a < min  -> updateBody { position with x = min }  { velocity with dx = 0. } body
-        | a, _ when a > maxX -> updateBody { position with x = maxX } { velocity with dx = 0. } body
-        | _, b when b < min  -> updateBody { position with y = min }  { velocity with dy = 0. } body
-        | _, b when b > maxY -> updateBody { position with y = maxY } { velocity with dy = 0. } body
-        | _                  -> { body with Position = position; Velocity = velocity }
+        match position.x, position.y, position.z with
+        | a, _, _ when a < r    -> updateBody { position with x = r    } { velocity with dx = 0. } body
+        | a, _, _ when a > maxX -> updateBody { position with x = maxX } { velocity with dx = 0. } body
+        | _, b, _ when b < r    -> updateBody { position with y = r    } { velocity with dy = 0. } body
+        | _, b, _ when b > maxY -> updateBody { position with y = maxY } { velocity with dy = 0. } body
+        | _, _, c when c < r    -> updateBody { position with z = r    } { velocity with dz = 0. } body
+        | _, _, c when c > maxZ -> updateBody { position with z = maxZ } { velocity with dz = 0. } body
+        | _                     -> { body with Position = position; Velocity = velocity }
 
     let moveBody body otherBodies =
 
