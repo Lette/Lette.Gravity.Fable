@@ -17,5 +17,7 @@ _(not in any specific order)_
 - [ ] Split colliding objects when delta-V is sufficient (turn the larger object into a random number of smaller objects, while keeping the sum of all energies constant)
 - [x] Extract all physics calculations to a Physics module
 - [x] Extract all modifiable settings to a Settings module
-- [ ] 3D!
+- [x] 3D!
 - [x] Remove `RequireQualifiedAccess` attribute to get type inference in method signatures working.
+- [ ] Add bounce effect
+- [ ] Pass the settings object around and make it immutable
