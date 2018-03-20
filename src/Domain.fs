@@ -3,6 +3,8 @@ namespace Lette.Gravity.Fable
 [<AutoOpen>]
 module Domain =
 
+    open System
+
     type Vector = { dx : float; dy : float; dz : float } with
         static member (+) (v1, v2) = { dx = v1.dx + v2.dx; dy = v1.dy + v2.dy; dz = v1.dz + v2.dz }
         static member Zero         = { dx = 0.;            dy = 0.;            dz = 0. }
@@ -20,14 +22,17 @@ module Domain =
     let radius { Mass = mass } =
         mass ** (1. / 3.) * 5.
 
-    let initialBodies = [
-        { Position = { x = 400.; y = 225.; z = 100. }; Mass = 50.0; Velocity = { dx = -0.2; dy = 0.1; dz = 0. } }
-        // { Position = { x = 200.; y = 225.; z = 200. }; Mass = 50.0; Velocity = { dx = 0.2; dy = 0.1; dz = 0. } }
-        // { Position = { x = 300.; y = 325.; z = 300. }; Mass = 50.0; Velocity = { dx = 0.2; dy = -0.1; dz = 0.1 } }
-        { Position = { x = 380.; y = 225.; z = 20. }; Mass = 10.0; Velocity = { dx = 0.4; dy = 0.1; dz = 0. } }
-        { Position = { x = 360.; y = 225.; z = 220. }; Mass = 8.0; Velocity = { dx = 0.2; dy = -0.5; dz = 0. } }
-        { Position = { x = 215.; y = 225.; z = 30. }; Mass = 10.0; Velocity = { dx = 0.15; dy = 0.1; dz = 0. } }
-        { Position = { x = 100.; y = 100.; z = 330. }; Mass = 0.1; Velocity = Vector.Zero }
-        { Position = { x = 300.; y = 100.; z = 40. }; Mass = 0.5; Velocity = { dx = 0.2; dy = -1.01; dz = 0. } }
-        { Position = { x = 5.; y = 15.; z = 0. }; Mass = 6.0; Velocity = { dx = -1.2; dy = 0.1; dz = 0. } }
-    ]
+    let initialBodies =
+
+        let numberOfInitialBodies = 10
+
+        let rnd = Random (int System.DateTime.Now.Ticks)
+        let nextRandom max = rnd.NextDouble () * max
+
+        let randomBody _ = {
+            Position = { x = nextRandom Width; y = nextRandom Height; z = nextRandom Depth };
+            Mass = nextRandom 1. ** 5. * 100.; // Favors more smaller bodies
+            Velocity = { dx = nextRandom 2. - 1.; dy = nextRandom 2. - 1.; dz = nextRandom 2. - 1. }
+        }
+
+        List.init numberOfInitialBodies randomBody 
