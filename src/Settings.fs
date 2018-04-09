@@ -31,3 +31,7 @@ module Settings =
     //    1.0  = full preservation, no slowdown/speedup
     //    0.99 = loses 1 % of velocity every frame
     let mutable VelocityFactor = 1.0
+
+    // When object "collide" (ie. the distance between them is less than their combined radii)
+    // they can optionally merge into a single object.
+    let mutable MergeCollidingObjects = true
