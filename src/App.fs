@@ -25,16 +25,32 @@ module App =
 
         let totalForce = otherBodies |> List.sumBy forceTowards
         
-        // F = ma <=> a = F/m or a = (1/m) * F. F is a vector and .* is the scalar multiplication operator.
-        let acceleration = (1. / body.Mass) |> scaleVector totalForce
+        let acceleration =
+            // F = ma   <=>   a = F/m   <=>   a = (1/m) * F
+            // where F and a are vectors and m is a scalar.
+            (1. / body.Mass) |> scaleVector totalForce
 
         let newVelocity = scaleVector body.Velocity VelocityFactor + acceleration
         let newPosition = body.Position + newVelocity
 
         updateBody newPosition newVelocity body
 
+    let mergeBodies bodies =
+        // detect and merge colliding bodies, effectively reducing the number of bodies
+
+        let isColliding a b = (vectorBetween a.Position b.Position).Length < (radius a + radius b)
+
+        // TODO: Find out how to (recursively?) go through the list of bodies and find all collisions.
+        // TODO: Only do collision detection and merging if Settings.MergeCollidingObjects is true.
+
+        match bodies with
+        | (b1::b2::rest) when isColliding b1 b2 -> { Position = barycenter b1 b2; Mass = b1.Mass + b2.Mass; Velocity = combinedVelocity b1 b2 } :: rest
+        | _ -> bodies
+
     let moveBodies bodies =
-        bodies |> List.map (fun body -> moveBody body (List.except [body] bodies))
+        bodies
+            |> List.map (fun body -> moveBody body (List.except [body] bodies))
+            |> mergeBodies
 
     let rec runSimulation bodies _ =
         let newBodies = moveBodies bodies
