@@ -4,3 +4,4 @@ node_modules/
 .vs/
 .vscode/
 paket-files/
+.ionide/
