@@ -11,7 +11,7 @@
     "babel-preset-env": "1.6.1",
     "fable-loader": "1.1.6",
     "fable-utils": "1.0.6",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "webpack": "^4.39.3",
     "webpack-cli": "^3.3.8",
     "webpack-dev-server": "^3.8.0"
