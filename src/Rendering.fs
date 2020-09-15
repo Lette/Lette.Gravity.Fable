@@ -93,18 +93,22 @@ module Rendering =
             drawMeridian x y rx r
 
         let drawProjections qx qy r =
-            ctx.beginPath ()
+            if (ShowVerticalProjections || ShowHorizontalProjections) then
+                ctx.beginPath ()
+                ctx.fillStyle <- transparent
+                ctx.strokeStyle <- !^ "rgba(255,255,255,0.4)"
 
-            // bottom projection
-            let qyr = r * sin (viewingAngle qy.y qy.z)
-            ctx.fillStyle <- transparent
-            ctx.strokeStyle <- !^ "rgba(255,255,255,0.4)"
-            ellipse qy.x qy.y r qyr
+                // bottom projection
+                if (ShowVerticalProjections) then
+                    let qyr = r * sin (viewingAngle qy.y qy.z)
+                    ellipse qy.x qy.y r qyr
 
-            // left projection
-            let qxr = r * sin (viewingAngle qx.x qx.z)
-            ellipse qx.x qx.y qxr r
-            ctx.stroke ()
+                // left projection
+                if (ShowHorizontalProjections) then
+                    let qxr = r * sin (viewingAngle qx.x qx.z)
+                    ellipse qx.x qx.y qxr r
+
+                ctx.stroke ()
 
         let drawHelperLines c qx qy r =
             if (ShowVerticalHelperLines || ShowHorizontalHelperLines) then
@@ -150,23 +154,24 @@ module Rendering =
         ctx.restore ()
 
     let private drawBoundingBox () =
-        ctx.beginPath ()
-        ctx.save ()
-        ctx.strokeStyle <- white
+        if (ShowBoundingBox) then
+            ctx.beginPath ()
+            ctx.save ()
+            ctx.strokeStyle <- white
 
-        ctx.rect (p1.x, p1.y, p2.x - p1.x, p2.y - p1.y)
-        ctx.rect (p1'.x, p1'.y, p2'.x - p1'.x, p2'.y - p1'.y)
-        ctx.moveTo (p1.x, p1.y)
-        ctx.lineTo (p1'.x, p1'.y)
-        ctx.moveTo (p1.x, p2.y)
-        ctx.lineTo (p1'.x, p2'.y)
-        ctx.moveTo (p2.x, p1.y)
-        ctx.lineTo (p2'.x, p1'.y)
-        ctx.moveTo (p2.x, p2.y)
-        ctx.lineTo (p2'.x, p2'.y)
+            ctx.rect (p1.x, p1.y, p2.x - p1.x, p2.y - p1.y)
+            ctx.rect (p1'.x, p1'.y, p2'.x - p1'.x, p2'.y - p1'.y)
+            ctx.moveTo (p1.x, p1.y)
+            ctx.lineTo (p1'.x, p1'.y)
+            ctx.moveTo (p1.x, p2.y)
+            ctx.lineTo (p1'.x, p2'.y)
+            ctx.moveTo (p2.x, p1.y)
+            ctx.lineTo (p2'.x, p1'.y)
+            ctx.moveTo (p2.x, p2.y)
+            ctx.lineTo (p2'.x, p2'.y)
 
-        ctx.stroke ()
-        ctx.restore ()
+            ctx.stroke ()
+            ctx.restore ()
 
     let render bodies =
         clearCanvas ()
