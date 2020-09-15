@@ -2,6 +2,19 @@
 
 This project is based on the [Fable](http://fable.io/) template for dotnet - see [below](#installing-the-template).
 
+## TL;DR
+
+From a clean checkout/clone:
+
+1. `.\.paket/paket.exe install`
+1. `npm install`
+1. `dotnet build`
+1. `cd src`
+1. `dotnet fable npm-start`
+1. Open [`localhost:8080`](http://localhost:8080/)
+
+Clean with `git clean -fdx`.
+
 ## Requirements
 
 * [dotnet SDK](https://www.microsoft.com/net/download/core) 2.0 or higher
