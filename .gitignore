@@ -5,3 +5,4 @@ node_modules/
 .vscode/
 paket-files/
 .ionide/
+Paket.Restore.targets
